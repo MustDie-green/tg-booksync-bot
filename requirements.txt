@@ -1,0 +1,3 @@
+aiogram==3.17
+python-dotenv==1.0.1
+dropbox==12.0.2

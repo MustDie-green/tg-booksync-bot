@@ -1,0 +1,7 @@
+services:
+  bot:
+    build: .
+    container_name: tg-booksync-bot
+    volumes:
+      - .:/app
+    restart: unless-stopped
