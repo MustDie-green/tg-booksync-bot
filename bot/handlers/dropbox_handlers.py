@@ -63,7 +63,7 @@ async def process_auth_code(message: types.Message, state: FSMContext):
         with dropbox.Dropbox(oauth2_access_token=access_token) as dbx:
             user_account = dbx.users_get_current_account()
             await message.answer(
-                f"Авторизация прошла успешно для!"
+                f"Авторизация прошла успешно!"
             )
             logging.info(f"Авторизация прошла успешно для {user_account.name.display_name}!")
 
