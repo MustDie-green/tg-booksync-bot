@@ -1,5 +1,5 @@
 .env
-bot/.dropbox_token
 *.ipynb
-bot/dropbox_tokens.db
-bot/__pycache__
+*dropbox_tokens.db*
+*__pycache__*
+*.vscode*
