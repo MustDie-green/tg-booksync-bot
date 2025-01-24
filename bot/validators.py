@@ -6,5 +6,5 @@ def is_valid_book_format(file_name: str, supported_book_formats: set) -> bool:
     return ext.lower() in supported_book_formats
 
 def is_valid_email(email_candidate):
-    re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_candidate)
+    return re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_candidate)
     
