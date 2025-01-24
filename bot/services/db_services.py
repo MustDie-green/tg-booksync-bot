@@ -5,44 +5,61 @@ def init_db():
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS dropbox_tokens (
+            CREATE TABLE IF NOT EXISTS user_data (
                 telegram_id INTEGER PRIMARY KEY,
-                dropbox_token TEXT NOT NULL,
-                refresh_token TEXT NOT NULL, 
-                expires_at DATETIME NOT NULL
+                dropbox_token TEXT,
+                refresh_token TEXT,
+                expires_at TEXT,
+                email TEXT
             )
         """)
         conn.commit()
 
-def get_user_token(telegram_id: int):
+def get_user_data(telegram_id: int):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT dropbox_token, refresh_token, expires_at 
-            FROM dropbox_tokens
+            SELECT dropbox_token, refresh_token, expires_at, email
+            FROM user_data
             WHERE telegram_id = ?
         """, (telegram_id,))
         return cursor.fetchone()
 
-def save_user_token(telegram_id: int, access_token: str, refresh_token: str, expires_at):
+def update_user_data(telegram_id: int, dropbox_token=None, refresh_token=None, expires_at=None, email=None):
     with sqlite3.connect(DB_PATH) as conn:
         cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO dropbox_tokens (telegram_id, dropbox_token, refresh_token, expires_at)
-            VALUES (?, ?, ?, ?)
-            ON CONFLICT(telegram_id) DO UPDATE
-            SET dropbox_token = excluded.dropbox_token,
-                refresh_token = excluded.refresh_token,
-                expires_at = excluded.expires_at
-        """, (telegram_id, access_token, refresh_token, str(expires_at)))
-        conn.commit()
+        
+        fields = []
+        params = []
 
-def update_access_token(telegram_id: int, new_access_token: str, new_expires_at: str):
-    with sqlite3.connect(DB_PATH) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE dropbox_tokens
-            SET dropbox_token = ?, expires_at = ?
+        if dropbox_token is not None:
+            fields.append("dropbox_token = ?")
+            params.append(dropbox_token)
+        if refresh_token is not None:
+            fields.append("refresh_token = ?")
+            params.append(refresh_token)
+        if expires_at is not None:
+            fields.append("expires_at = ?")
+            params.append(expires_at)
+        if email is not None:
+            fields.append("email = ?")
+            params.append(email)
+
+        if not fields:
+            return
+
+        set_clause = ", ".join(fields)
+        params.append(telegram_id)
+
+        cursor.execute(f"""
+            INSERT INTO user_data (telegram_id) VALUES (?)
+            ON CONFLICT(telegram_id) DO NOTHING
+        """, (telegram_id,))
+
+        cursor.execute(f"""
+            UPDATE user_data
+            SET {set_clause}
             WHERE telegram_id = ?
-        """, (new_access_token, new_expires_at, telegram_id))
+        """, tuple(params))
+
         conn.commit()
