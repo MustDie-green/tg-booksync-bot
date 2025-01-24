@@ -12,6 +12,7 @@ from bot.states import BotMode
 from bot.services.dropbox_services import ensure_dropbox_auth, upload_book_to_dropbox
 
 from config import SUPPORTED_BOOK_FORMATS
+from bot.validators import is_valid_book_format
 
 async def file_handler(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
@@ -23,10 +24,10 @@ async def file_handler(message: types.Message, state: FSMContext):
         return
 
     file_name = file.file_name or ""
-    _, ext = os.path.splitext(file_name)
-    if ext.lower() not in SUPPORTED_BOOK_FORMATS:
+
+    if not is_valid_book_format(file_name, SUPPORTED_BOOK_FORMATS):
         await message.answer(f"Похоже, это не электронная книга. Отправьте {', '.join(SUPPORTED_BOOK_FORMATS)}\n"
-                             "Если вы хотите, чтобы под поддерживал больше форматов, напишите автору бота или сделайте pull request — /help")
+                             "Если вы хотите, чтобы бот поддерживал больше форматов, напишите автору бота или сделайте pull request — /help")
         logging.warning(f"Прислали файл неподходящего формата: {file_name}")
         return
 

@@ -10,10 +10,11 @@ from bot.states import AuthStates, EmailStates, BotMode
 
 from bot.services.db_services import update_user_data
 
+from bot.validators import is_valid_email
+
 from config import (
     DROPBOX_APP_KEY,
-    DROPBOX_APP_SECRET,
-    EMAIL_REGEX
+    DROPBOX_APP_SECRET
 )
 
 async def add_email(message: types.Message, state: FSMContext):
@@ -22,7 +23,7 @@ async def add_email(message: types.Message, state: FSMContext):
 
 async def process_email(message: types.Message, state: FSMContext):
     email_candidate = message.text.strip()
-    if not re.match(EMAIL_REGEX, email_candidate):
+    if not is_valid_email(email_candidate):
         await message.answer("Это не похоже на электронную почту. Попробуйте снова /add_email.")
         await state.clear()
         return

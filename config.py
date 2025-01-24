@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 import os
 
 SUPPORTED_BOOK_FORMATS = {".epub", ".fb2", ".pdf", ".mobi"}
-EMAIL_REGEX = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
 
 DB_PATH = "dropbox_tokens.db"
 
