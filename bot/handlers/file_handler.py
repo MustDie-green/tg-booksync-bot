@@ -59,10 +59,9 @@ async def file_handler(message: types.Message, state: FSMContext):
         try:
             send_book_via_yandex(
                 to_email=user_email,
-                subject="Book from flexbooksync",
-                text_body="Your book from flexbooksync",
                 file_bytes=file_in_io.read(),
-                file_name=file_name
+                file_name=file_name,
+                telegram_username=message.from_user.username
             )
             await message.answer(f"Книга {file_name} отправлена на {user_email}!")
         except Exception as e:
