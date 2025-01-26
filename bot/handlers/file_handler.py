@@ -38,7 +38,7 @@ async def file_handler(message: types.Message, state: FSMContext):
     file_in_io = io.BytesIO()
     file_info = await message.bot.get_file(file.file_id)
     try:
-        await message.bot.download_file(file_info.file_path, file_in_io)
+        await message.bot.download_file(file_info.file_path, file_in_io, timeout=120)
     except Exception as e:
         message.answer('Произошла ошибка при скачивании файла из Телеграм, возможно, он слишком большой для меня, напиши автору бота')
         logging.error(f"Ошибка при скачивании файла: {e}")

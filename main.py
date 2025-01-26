@@ -11,9 +11,7 @@ logging.basicConfig(level=logging.DEBUG)
 async def main():
     init_db()
 
-    timeout = ClientTimeout(total=150) 
-
-    bot = Bot(token=TELEGRAM_BOT_TOKEN, timeout=timeout)
+    bot = Bot(token=TELEGRAM_BOT_TOKEN)
     dp = Dispatcher()
     
     register_all_handlers(dp)
